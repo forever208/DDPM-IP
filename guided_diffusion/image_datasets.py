@@ -38,30 +38,24 @@ def load_data(
     """
     if not data_dir:
         raise ValueError("unspecified data directory")
-    all_files = _list_image_files_recursively(data_dir)
+    # all_files = _list_image_files_recursively(data_dir)
     classes = None
-    if class_cond:
-        # Assume classes are the first part of the filename,
-        # before an underscore.
-        class_names = [bf.basename(path).split("_")[0] for path in all_files]
-        sorted_classes = {x: i for i, x in enumerate(sorted(set(class_names)))}
-        classes = [sorted_classes[x] for x in class_names]
-    dataset = ImageDataset(
-        image_size,
-        all_files,
-        classes=classes,
-        shard=MPI.COMM_WORLD.Get_rank(),
-        num_shards=MPI.COMM_WORLD.Get_size(),
-        random_crop=random_crop,
-        random_flip=random_flip,
-    )
+    # if class_cond:
+    #     # Assume classes are the first part of the filename,
+    #     # before an underscore.
+    #     class_names = [bf.basename(path).split("_")[0] for path in all_files]
+    #     sorted_classes = {x: i for i, x in enumerate(sorted(set(class_names)))}
+    #     classes = [sorted_classes[x] for x in class_names]
+
+    dataset = ImageDataset(image_size, data_dir, classes=classes, shard=MPI.COMM_WORLD.Get_rank(),
+                           num_shards=MPI.COMM_WORLD.Get_size(), random_crop=random_crop, random_flip=random_flip)
     if deterministic:
         loader = DataLoader(
-            dataset, batch_size=batch_size, shuffle=False, num_workers=1, drop_last=True
+            dataset, batch_size=batch_size, shuffle=False, num_workers=1, drop_last=True, pin_memory=True
         )
     else:
         loader = DataLoader(
-            dataset, batch_size=batch_size, shuffle=True, num_workers=1, drop_last=True
+            dataset, batch_size=batch_size, shuffle=True, num_workers=1, drop_last=True, pin_memory=True
         )
     while True:
         yield from loader
@@ -92,28 +86,27 @@ class ImageDataset(Dataset):
     ):
         super().__init__()
         self.resolution = resolution
-        self.local_images = image_paths[shard:][::num_shards]
+        # self.local_images = image_paths[shard:][::num_shards]
+        self.local_images = np.load(image_paths + '/ImageNet64_train_all.npz')['arr_0'][shard:][::num_shards]
         self.local_classes = None if classes is None else classes[shard:][::num_shards]
         self.random_crop = random_crop
         self.random_flip = random_flip
 
     def __len__(self):
-        return len(self.local_images)
+        return self.local_images.shape[0]
 
     def __getitem__(self, idx):
-        path = self.local_images[idx]
-        with bf.BlobFile(path, "rb") as f:
-            pil_image = Image.open(f)
-            pil_image.load()
-        pil_image = pil_image.convert("RGB")
+        pil_image = self.local_images[idx]  # 3D array with shape (64, 64, 3)
 
-        if self.random_crop:
-            arr = random_crop_arr(pil_image, self.resolution)
-        else:
-            arr = center_crop_arr(pil_image, self.resolution)
+        # if self.random_crop:
+        #     arr = random_crop_arr(pil_image, self.resolution)
+        # else:
+        #     arr = center_crop_arr(pil_image, self.resolution)
 
         if self.random_flip and random.random() < 0.5:
-            arr = arr[:, ::-1]
+            arr = pil_image[:, ::-1]  # left right flip
+        else:
+            arr = pil_image
 
         arr = arr.astype(np.float32) / 127.5 - 1
 
