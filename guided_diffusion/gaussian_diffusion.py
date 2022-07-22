@@ -13,6 +13,7 @@ import torch as th
 
 from .nn import mean_flat
 from .losses import normal_kl, discretized_gaussian_log_likelihood
+from guided_diffusion import logger
 
 
 def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
@@ -123,6 +124,7 @@ class GaussianDiffusion:
         model_var_type,
         loss_type,
         rescale_timesteps=False,
+        input_pertub=0.0
     ):
         self.model_mean_type = model_mean_type
         self.model_var_type = model_var_type
@@ -167,6 +169,8 @@ class GaussianDiffusion:
             * np.sqrt(alphas)
             / (1.0 - self.alphas_cumprod)
         )
+        self.input_pertub = input_pertub
+        logger.log(f"input perturbation is: {self.input_pertub}")
 
     def q_mean_variance(self, x_start, t):
         """
@@ -758,7 +762,8 @@ class GaussianDiffusion:
             model_kwargs = {}
         if noise is None:
             noise = th.randn_like(x_start)
-        x_t = self.q_sample(x_start, t, noise=noise)
+        new_noise = noise + self.input_pertub * th.randn_like(noise)
+        x_t = self.q_sample(x_start, t, noise=new_noise)
 
         terms = {}
 
