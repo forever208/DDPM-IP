@@ -13,6 +13,8 @@ import torch as th
 
 from .nn import mean_flat
 from .losses import normal_kl, discretized_gaussian_log_likelihood
+from . import logger
+import time
 
 
 def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
@@ -741,7 +743,7 @@ class GaussianDiffusion:
         output = th.where((t == 0), decoder_nll, kl)
         return {"output": output, "pred_xstart": out["pred_xstart"]}
 
-    def training_losses(self, model, x_start, t, model_kwargs=None, noise=None):
+    def training_losses(self, model, x_start, t, model_kwargs=None, noise=None, steps=None):
         """
         Compute training losses for a single timestep.
 
@@ -758,7 +760,11 @@ class GaussianDiffusion:
             model_kwargs = {}
         if noise is None:
             noise = th.randn_like(x_start)
-        x_t = self.q_sample(x_start, t, noise=noise)
+        new_noise = noise + 0.1 * th.randn_like(noise)
+        x_t = self.q_sample(x_start, t, noise=new_noise)
+
+        if steps % 10000 == 0:
+            x_t.requires_grad = True
 
         terms = {}
 
@@ -775,6 +781,16 @@ class GaussianDiffusion:
                 terms["loss"] *= self.num_timesteps
         elif self.loss_type == LossType.MSE or self.loss_type == LossType.RESCALED_MSE:
             model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
+
+            # check gradient
+            if steps % 10000 == 0:
+                gradient = th.autograd.grad(outputs=model_output, inputs=x_t, grad_outputs=th.ones_like(model_output),
+                                            create_graph=True, retain_graph=True)[0]
+                gradient_norm = 0
+                for i in range(gradient.shape[1]):
+                    gradient_norm += th.linalg.matrix_norm(gradient[:, i, :, :], ord='fro', dim=(-2, -1))
+                logger.log(f"gradient wrt input is: {gradient_norm}...")
+                x_t.requires_grad = False
 
             if self.model_var_type in [
                 ModelVarType.LEARNED,
@@ -815,6 +831,57 @@ class GaussianDiffusion:
             raise NotImplementedError(self.loss_type)
 
         return terms
+
+    def gradient_norm(self, model, x_start, t, model_kwargs=None, noise=None, steps=None):
+        """
+        Compute training losses for a single timestep.
+
+        :param model: the model to evaluate loss on.
+        :param x_start: the [N x C x ...] tensor of inputs.
+        :param t: a batch of timestep indices.
+        :param model_kwargs: if not None, a dict of extra keyword arguments to
+            pass to the model. This can be used for conditioning.
+        :param noise: if specified, the specific Gaussian noise to try to remove.
+        :return: a dict with the key "loss" containing a tensor of shape [N].
+                 Some mean or variance settings may also have other keys.
+        """
+        if model_kwargs is None:
+            model_kwargs = {}
+        if noise is None:
+            noise = th.randn_like(x_start)
+        new_noise = noise + 0.1 * th.randn_like(noise)
+        x_t = self.q_sample(x_start, t, noise=new_noise)
+
+        if steps % 10000 == 0:
+            x_t.requires_grad = True
+
+        terms = {}
+        gradient_norm = 0
+        if self.loss_type == LossType.KL or self.loss_type == LossType.RESCALED_KL:
+            terms["loss"] = self._vb_terms_bpd(
+                model=model,
+                x_start=x_start,
+                x_t=x_t,
+                t=t,
+                clip_denoised=False,
+                model_kwargs=model_kwargs,
+            )["output"]
+            if self.loss_type == LossType.RESCALED_KL:
+                terms["loss"] *= self.num_timesteps
+        elif self.loss_type == LossType.MSE or self.loss_type == LossType.RESCALED_MSE:
+            model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
+
+            # check gradient
+            gradient = th.autograd.grad(outputs=model_output, inputs=x_t, grad_outputs=th.ones_like(model_output),
+                                        create_graph=False, retain_graph=False)[0]
+            for i in range(gradient.shape[1]):
+                gradient_norm += th.linalg.matrix_norm(gradient[:, i, :, :], ord='fro', dim=(-2, -1))
+            x_t.requires_grad = False
+
+        else:
+            raise NotImplementedError(self.loss_type)
+
+        return gradient_norm
 
     def _prior_bpd(self, x_start):
         """

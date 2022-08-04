@@ -14,7 +14,7 @@ def load_data(
     batch_size,
     image_size,
     class_cond=False,
-    deterministic=False,
+    deterministic=True,
     random_crop=False,
     random_flip=True,
 ):
@@ -87,7 +87,7 @@ class ImageDataset(Dataset):
         super().__init__()
         self.resolution = resolution
         # self.local_images = image_paths[shard:][::num_shards]
-        self.local_images = np.load(image_paths + '/ImageNet64_train_all.npz')['arr_0'][shard:][::num_shards]
+        self.local_images = np.load(image_paths)['arr_0'][shard:][::num_shards]
         self.local_classes = None if classes is None else classes[shard:][::num_shards]
         self.random_crop = random_crop
         self.random_flip = random_flip
