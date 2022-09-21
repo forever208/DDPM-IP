@@ -111,17 +111,20 @@ class TrainLoop:
             self.ddp_model = self.model
 
     def _load_and_sync_parameters(self):
-        resume_checkpoint = find_resume_checkpoint() or self.resume_checkpoint
+        # resume_checkpoint = find_resume_checkpoint() or self.resume_checkpoint
 
-        if resume_checkpoint:
-            self.resume_step = parse_resume_step_from_filename(resume_checkpoint)
-            # if dist.get_rank() == 0:
-            logger.log(f"loading model from checkpoint: {resume_checkpoint}...")
-            self.model.load_state_dict(
-                dist_util.load_state_dict(
-                    resume_checkpoint, map_location=dist_util.dev()
-                )
-            )
+        # if resume_checkpoint:
+        #     self.resume_step = parse_resume_step_from_filename(resume_checkpoint)
+        #     # if dist.get_rank() == 0:
+        #     logger.log(f"loading model from checkpoint: {resume_checkpoint}...")
+        #     self.model.load_state_dict(
+        #         dist_util.load_state_dict(
+        #             resume_checkpoint, map_location=dist_util.dev()
+        #         )
+        #     )
+        logger.log(f"loading model from checkpoint: {self.resume_checkpoint}...")
+        self.model.load_state_dict(dist_util.load_state_dict(self.resume_checkpoint, map_location=dist_util.dev()))
+        logger.log(f"checkpoint loaded...")
 
         dist_util.sync_params(self.model.parameters())
 
@@ -157,7 +160,7 @@ class TrainLoop:
         for t in range(1, 1000, 100):
             self.grad_norm[str(t)] = 0
 
-        while (self.num_iter < 10000):
+        while (self.num_iter < 468):  # 468 for cifar10, 1000 for ImageNet32_sub, 10000 for ImageNet32
             logger.log(f" ")
             logger.log(f"computing {self.num_iter+1} batch...")
             batch, cond = next(self.data)

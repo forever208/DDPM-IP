@@ -30,7 +30,7 @@ def main():
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, model_and_diffusion_defaults().keys())
     )
-    model_path = './imagenet_log5_lb/ema_0.9999_200000.pt'
+    model_path = './imagenet32_sub_base/ema_0.9999_100000.pt'
     model.load_state_dict(
         dist_util.load_state_dict(model_path, map_location="cpu")
     )
