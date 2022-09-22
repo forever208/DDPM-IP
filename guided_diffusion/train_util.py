@@ -8,6 +8,7 @@ import torch as th
 import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
+import numpy as np
 
 from . import dist_util, logger
 from .fp16_util import MixedPrecisionTrainer
@@ -62,7 +63,7 @@ class TrainLoop:
 
         self.step = 0
         self.num_iter = 0
-        self.grad_norm = {}
+        self.avg_x_0_distance = 0
         self.resume_step = 0
         self.global_batch = self.batch_size * dist.get_world_size()
 
@@ -157,23 +158,24 @@ class TrainLoop:
             self.opt.load_state_dict(state_dict)
 
     def run_loop(self):
-        for t in range(1, 1000, 100):
-            self.grad_norm[str(t)] = 0
-
+        samples_npz = []
         while (self.num_iter < 468):  # 468 for cifar10, 1000 for ImageNet32_sub, 10000 for ImageNet32
             logger.log(f" ")
             logger.log(f"computing {self.num_iter+1} batch...")
             batch, cond = next(self.data)
 
-            for t in range(1, 1000, 100):
-                avg_grad_norm = self.run_step(batch, cond, t)
-                self.grad_norm[str(t)] += avg_grad_norm
-
+            t=10-1
+            sample = self.run_step(batch, cond, t)
+            samples_npz.append(sample)
             self.num_iter += 1
-            for t in range(1, 1000, 100):
-                logger.log(f"avg gram_norm at {t}: {self.grad_norm[str(t)]/self.num_iter}")
+            logger.log(f"generated {self.num_iter * self.batch_size} samples")
 
-        logger.log(f"evaluation finished")
+        samples_npz = np.array(samples_npz)
+        final_samples = samples_npz.reshape((-1, 32, 32, 3))
+        logger.log(f"npz size: {final_samples.shape}")
+        path = './cifar_base_expobias/samples_10_steps.npz'
+        np.savez(path, final_samples)
+        logger.log(f"array saved into {path}")
 
     def run_step(self, batch, cond, t):
         return self.forward_backward(batch, cond, t)
@@ -197,34 +199,37 @@ class TrainLoop:
             ones = th.ones(micro.shape[0]).long().to(dist_util.dev())
             timestep = ones * t
 
-            compute_grad_norm = functools.partial(
-                self.diffusion.gradient_norm,
-                self.ddp_model,
+            # sample x_t given gt x_0
+            gt_x_t = functools.partial(
+                self.diffusion.sample_x_t,
                 micro,
                 timestep,
                 model_kwargs=micro_cond,
-                steps=self.step
             )
 
             if last_batch or not self.use_ddp:
-                grad_norm = compute_grad_norm()
+                x_t = gt_x_t()
             else:
                 with self.ddp_model.no_sync():
-                    grad_norm = compute_grad_norm()
+                    x_t = gt_x_t()
 
-            avg_grad_norm = grad_norm.mean().detach().cpu().numpy()
-            # if isinstance(self.schedule_sampler, LossAwareSampler):
-            #     self.schedule_sampler.update_with_local_losses(
-            #         t, losses["loss"].detach()
-            #     )
-            #
-            # loss = (losses["loss"] * weights).mean()
-            # log_loss_dict(
-            #     self.diffusion, t, {k: v * weights for k, v in losses.items()}
-            # )
-            # self.mp_trainer.backward(loss)
-            # logger.log(f"gradient norm at {timestep} is: {avg_grad_norm}...")
-            return avg_grad_norm
+            # run inference to get x_0 hat
+            sample_fn = self.diffusion.p_sample_loop
+            sample = sample_fn(
+                self.ddp_model,
+                (self.batch_size, 3, micro.shape[2], micro.shape[3]),
+                noise=x_t,
+            )
+
+            # compute distance
+            # diff = th.abs(sample-micro)
+            # avg_x_0_dist = diff.mean().detach().cpu().numpy()
+
+            sample = ((sample + 1) * 127.5).clamp(0, 255).to(th.uint8)
+            sample = sample.permute(0, 2, 3, 1)
+            sample = sample.contiguous().detach().cpu().numpy()
+
+            return sample
 
     def _update_ema(self):
         for rate, params in zip(self.ema_rate, self.ema_params):
