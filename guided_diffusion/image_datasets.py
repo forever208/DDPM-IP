@@ -6,6 +6,7 @@ import blobfile as bf
 from mpi4py import MPI
 import numpy as np
 from torch.utils.data import DataLoader, Dataset
+from . import logger
 
 
 def load_data(
@@ -50,10 +51,12 @@ def load_data(
     dataset = ImageDataset(image_size, data_dir, classes=classes, shard=MPI.COMM_WORLD.Get_rank(),
                            num_shards=MPI.COMM_WORLD.Get_size(), random_crop=random_crop, random_flip=random_flip)
     if deterministic:
+        logger.log(f"sequential datasets")
         loader = DataLoader(
             dataset, batch_size=batch_size, shuffle=False, num_workers=1, drop_last=True, pin_memory=True
         )
     else:
+        logger.log(f"shuffle datasets")
         loader = DataLoader(
             dataset, batch_size=batch_size, shuffle=True, num_workers=1, drop_last=True, pin_memory=True
         )
@@ -82,7 +85,7 @@ class ImageDataset(Dataset):
         shard=0,
         num_shards=1,
         random_crop=False,
-        random_flip=True,
+        random_flip=False,
     ):
         super().__init__()
         self.resolution = resolution
@@ -103,10 +106,10 @@ class ImageDataset(Dataset):
         # else:
         #     arr = center_crop_arr(pil_image, self.resolution)
 
-        if self.random_flip and random.random() < 0.5:
-            arr = pil_image[:, ::-1]  # left right flip
-        else:
-            arr = pil_image
+        # if self.random_flip and random.random() < 0.5:
+        #     arr = pil_image[:, ::-1]  # left right flip
+        # else:
+        arr = pil_image
 
         arr = arr.astype(np.float32) / 127.5 - 1
 
