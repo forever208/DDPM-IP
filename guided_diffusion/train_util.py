@@ -4,6 +4,7 @@ import os
 import time
 
 import blobfile as bf
+import numpy as np
 import torch as th
 import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
@@ -62,7 +63,7 @@ class TrainLoop:
 
         self.step = 0
         self.num_iter = 0
-        self.avg_x_0_distance = 0
+        self.pred_error = {}
         self.resume_step = 0
         self.global_batch = self.batch_size * dist.get_world_size()
 
@@ -157,18 +158,34 @@ class TrainLoop:
             self.opt.load_state_dict(state_dict)
 
     def run_loop(self):
-
-        while (self.num_iter < 10000):  # 468 for cifar10, 1000 for ImageNet32_sub, 10000 for ImageNet32
+        while (self.num_iter < 100):
             logger.log(f" ")
             logger.log(f"computing {self.num_iter+1} batch...")
             batch, cond = next(self.data)
 
-            t=999
-            avg_x_0_distance = self.run_step(batch, cond, t)
-            self.avg_x_0_distance += avg_x_0_distance
-            self.num_iter += 1
-            logger.log(f"avg x_0 distance is : {self.avg_x_0_distance/self.num_iter}")
+            # compute prediction error for each timestep
+            for t in range(0, 1000):  # [0, 1, 2, ...999]
+                pred_error = self.run_step(batch, cond, t)  # 1D list
 
+                if str(t) in self.pred_error.keys():
+                    for i in pred_error:
+                        self.pred_error[str(t)].append(i)  # each key-value is a 1D list
+                else:
+                    self.pred_error[str(t)] = pred_error
+
+            self.num_iter += 1
+            logger.log(f"number of error samples for Gaussian visualization: {len(self.pred_error['2'])}")
+
+        logger.log(f" ")
+        logger.log(f"saving data as npz...")
+        values = list(self.pred_error.values())
+        npz = np.stack((np.array(values[0]), np.array(values[1])))
+        for value in values[2:]:
+            npz = np.concatenate((npz, np.array(value)[np.newaxis, :]), axis=0)
+
+        logger.log(f"npz size: {npz.shape}")
+        np.savez('./imagenet32_noise_0.1_gaussian_error/gaussian_error_pixel[256]', npz)
+        logger.log("array saved into 'gaussian_error_pixel[256].npz'")
         logger.log(f"evaluation finished")
 
     def run_step(self, batch, cond, t):
@@ -193,33 +210,39 @@ class TrainLoop:
             ones = th.ones(micro.shape[0]).long().to(dist_util.dev())
             timestep = ones * t
 
-            # sample x_t given gt x_0
-            gt_x_t = functools.partial(
-                self.diffusion.sample_x_t,
+            # sample x_t
+            forward_fn = self.diffusion.sample_x_t
+            gt_x_t = forward_fn(
                 micro,
                 timestep,
                 model_kwargs=micro_cond,
             )
 
-            if last_batch or not self.use_ddp:
-                x_t = gt_x_t()
+            # sample x_t_prev
+            if t == 0:
+                gt_x_t_prev = micro
             else:
-                with self.ddp_model.no_sync():
-                    x_t = gt_x_t()
+                gt_x_t_prev = forward_fn(
+                    micro,
+                    ones*(t-1),
+                    model_kwargs=micro_cond,
+                )
 
-            # run inference to get x_0 hat
-            sample_fn = self.diffusion.p_sample_loop
-            sample = sample_fn(
+            # run inference to get x_t_prev hat
+            sample_fn = self.diffusion.p_sample
+            pred_x_t_prev = sample_fn(
                 self.ddp_model,
-                (self.batch_size, 3, micro.shape[2], micro.shape[3]),
-                noise=x_t,
+                gt_x_t,
+                timestep,
             )
+            pred_x_t_prev = pred_x_t_prev["sample"]  # mean of pred_x_t_prev
 
-            # compute distance
-            diff = th.abs(sample-micro)
-            avg_x_0_dist = diff.mean().detach().cpu().numpy()
+            # compute error between gt_x_t_prev and pred_x_t_prev for each pixel
+            error = gt_x_t_prev - pred_x_t_prev  # 4D tensor (batch, 3, 32, 32)
+            error = error[:, 1, 15, 15]  # 1D tensor (batch)
+            pred_error = error.detach().cpu().numpy().tolist()
 
-            return avg_x_0_dist
+            return pred_error
 
     def _update_ema(self):
         for rate, params in zip(self.ema_rate, self.ema_params):
