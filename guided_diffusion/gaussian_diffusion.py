@@ -205,7 +205,7 @@ class GaussianDiffusion:
             _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
             + _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod, t, x_start.shape)
             * noise
-        )
+        ), noise
 
     def q_posterior_mean_variance(self, x_start, x_t, t):
         """
@@ -264,6 +264,8 @@ class GaussianDiffusion:
         if self.model_var_type in [ModelVarType.LEARNED, ModelVarType.LEARNED_RANGE]:
             assert model_output.shape == (B, C * 2, *x.shape[2:])
             model_output, model_var_values = th.split(model_output, C, dim=1)
+            pred_eps = model_output
+
             if self.model_var_type == ModelVarType.LEARNED:
                 model_log_variance = model_var_values
                 model_variance = th.exp(model_log_variance)
@@ -321,6 +323,7 @@ class GaussianDiffusion:
             model_mean.shape == model_log_variance.shape == pred_xstart.shape == x.shape
         )
         return {
+            "eps": pred_eps,
             "mean": model_mean,
             "variance": model_variance,
             "log_variance": model_log_variance,
@@ -901,9 +904,9 @@ class GaussianDiffusion:
             model_kwargs = {}
         if noise is None:
             noise = th.randn_like(x_start)
-        x_t = self.q_sample(x_start, t, noise=noise)
+        x_t, eps = self.q_sample(x_start, t, noise=noise)
 
-        return x_t
+        return x_t, eps
 
     def _prior_bpd(self, x_start):
         """
