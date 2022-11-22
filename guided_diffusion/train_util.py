@@ -184,8 +184,8 @@ class TrainLoop:
             npz = np.concatenate((npz, np.array(value)[np.newaxis, :]), axis=0)
 
         logger.log(f"npz size: {npz.shape}")
-        np.savez('./imagenet32_base_gaussian_error/gaussian_error_eps_at_pixel[256]', npz)
-        logger.log("array saved into 'gaussian_error_eps_at_pixel[256]' ")
+        np.savez('./imagenet32_base_gaussian_error/gaussian_error_xstart_at_pixel[256]', npz)
+        logger.log("array saved into 'gaussian_error_xstart_at_pixel[256]' ")
         logger.log(f"evaluation finished")
 
     def run_step(self, batch, cond, t):
@@ -212,7 +212,7 @@ class TrainLoop:
 
             # sample x_t
             forward_fn = self.diffusion.sample_x_t
-            gt_x_t, gt_eps = forward_fn(
+            gt_x_t, _ = forward_fn(
                 micro,
                 timestep,
                 model_kwargs=micro_cond,
@@ -225,10 +225,10 @@ class TrainLoop:
                 gt_x_t,
                 timestep,
             )
-            pred_eps = predction["eps"]  # predicted epsilon
+            pred_x_0 = predction["pred_xstart"]  # predicted x_0
 
-            # compute error between gt_x_t_prev and pred_x_t_prev for each pixel
-            error = pred_eps - gt_eps  # 4D tensor (batch, 3, 32, 32)
+            # compute error between gt_x_0 and pred_x_0 for each pixel
+            error = pred_x_0 - micro  # 4D tensor (batch, 3, 32, 32)
             error = error[:, 1, 15, 15]  # 1D tensor (batch)
             pred_error = error.detach().cpu().numpy().tolist()
 
