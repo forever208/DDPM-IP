@@ -164,29 +164,29 @@ class TrainLoop:
             batch, cond = next(self.data)
 
             # compute prediction error for each timestep
-            for t in range(0, 1000):  # [0, 1, 2, ...999]
-                pred_error = self.run_step(batch, cond, t)  # 1D list
+            for t in range(0, 1000, 10):  # [0, 1, 2, ...999]
+                pred_error = self.run_step(batch, cond, t)  # 4D array (batch, 3, 32, 32)
 
                 if str(t) in self.pred_error.keys():
-                    for i in pred_error:
-                        self.pred_error[str(t)].append(i)  # each key-value is a 1D list
+                    self.pred_error[str(t)] = np.concatenate((self.pred_error[str(t)], pred_error), axis=0)
                 else:
                     self.pred_error[str(t)] = pred_error
 
             self.num_iter += 1
-            logger.log(f"number of error samples for Gaussian visualization: {len(self.pred_error['2'])}")
+            # logger.log(f"number of error samples for Gaussian visualization: {len(self.pred_error['2'])}")
+            logger.log(f"current array shape of each t: {self.pred_error['0'].shape}")
 
         logger.log(f" ")
         logger.log(f"saving data as npz...")
-        values = list(self.pred_error.values())
-        npz = np.stack((np.array(values[0]), np.array(values[1])))
-        for value in values[2:]:
-            npz = np.concatenate((npz, np.array(value)[np.newaxis, :]), axis=0)
+        all_t = list(self.pred_error.keys())
+        npz = np.stack((self.pred_error[all_t[0]], self.pred_error[all_t[1]]))  # 5D array (2, batch, 3, 32, 32)
+        for t in all_t[2:]:
+            npz = np.concatenate((npz, self.pred_error[t][np.newaxis, :]), axis=0)
 
-        logger.log(f"npz size: {npz.shape}")
-        np.savez('./imagenet32_base_gaussian_error/gaussian_error_xstart_at_pixel[256]', npz)
-        logger.log("array saved into 'gaussian_error_xstart_at_pixel[256]' ")
-        logger.log(f"evaluation finished")
+        logger.log(f"npz size: {npz.shape}")  # 5D array (100, batch, 3, 32, 32)
+        path = './imagenet32_base_gaussian_error/gaussian_error_xstart_all_pixels'
+        np.savez(path, npz)
+        logger.log(f"array saved into {path}")
 
     def run_step(self, batch, cond, t):
         return self.forward_backward(batch, cond, t)
@@ -229,8 +229,8 @@ class TrainLoop:
 
             # compute error between gt_x_0 and pred_x_0 for each pixel
             error = pred_x_0 - micro  # 4D tensor (batch, 3, 32, 32)
-            error = error[:, 1, 15, 15]  # 1D tensor (batch)
-            pred_error = error.detach().cpu().numpy().tolist()
+            # error = error[:, 1, 15, 15]  # 1D tensor (batch)
+            pred_error = error.detach().cpu().numpy()
 
             return pred_error
 
