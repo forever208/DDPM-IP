@@ -159,12 +159,12 @@ class TrainLoop:
 
     def run_loop(self):
         samples_npz = []
-        while (self.num_iter < 468):  # 468 for cifar10, 1000 for ImageNet32_sub, 10000 for ImageNet32
+        while (self.num_iter < 391):  # 391*128=50048
             logger.log(f" ")
             logger.log(f"computing {self.num_iter+1} batch...")
             batch, cond = next(self.data)
 
-            t=10-1
+            t=100-1
             sample = self.run_step(batch, cond, t)
             samples_npz.append(sample)
             self.num_iter += 1
@@ -172,8 +172,9 @@ class TrainLoop:
 
         samples_npz = np.array(samples_npz)
         final_samples = samples_npz.reshape((-1, 32, 32, 3))
+        final_samples = final_samples[:50000]
         logger.log(f"npz size: {final_samples.shape}")
-        path = './cifar_base_expobias/samples_10_steps.npz'
+        path = './imagenet32_base_expobias/FID_samples_100_steps.npz'
         np.savez(path, final_samples)
         logger.log(f"array saved into {path}")
 
