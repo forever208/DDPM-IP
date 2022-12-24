@@ -184,7 +184,7 @@ class TrainLoop:
             npz = np.concatenate((npz, self.pred_error[t][np.newaxis, :]), axis=0)
 
         logger.log(f"npz size: {npz.shape}")  # 5D array (100, batch, 3, 32, 32)
-        path = './imagenet32_base_gaussian_error/gaussian_error_xstart_all_pixels'
+        path = './cifar_base_gaussian_error/gaussian_error_xstart_all_pixels'
         np.savez(path, npz)
         logger.log(f"array saved into {path}")
 
