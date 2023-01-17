@@ -514,7 +514,7 @@ class GaussianDiffusion:
             img = noise
         else:
             img = th.randn(*shape, device=device)
-        indices = list(range(1000))[::-1]  # [9, 8, 7,...0]
+        indices = list(range(600))[::-1]  # [9, 8, 7,...0]
 
         if progress:
             # Lazy import so that we don't depend on tqdm.

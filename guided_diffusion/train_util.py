@@ -158,12 +158,12 @@ class TrainLoop:
             self.opt.load_state_dict(state_dict)
 
     def run_loop(self):
-        while (self.num_iter < 468):  # 468 for cifar10, 1000 for ImageNet32_sub, 10000 for ImageNet32
+        while (self.num_iter < 1):  # 468 for cifar10, 1000 for ImageNet32_sub, 10000 for ImageNet32
             logger.log(f" ")
             logger.log(f"computing {self.num_iter+1} batch...")
             batch, cond = next(self.data)
 
-            t=1000-1
+            t=600-1
             avg_x_0_distance = self.run_step(batch, cond, t)
             self.avg_x_0_distance += avg_x_0_distance
             self.num_iter += 1
@@ -218,6 +218,21 @@ class TrainLoop:
             # compute distance
             diff = th.abs(sample-micro)
             avg_x_0_dist = diff.mean().detach().cpu().numpy()
+
+            micro = ((micro + 1) * 127.5).clamp(0, 255).to(th.uint8)
+            micro = micro.permute(0, 2, 3, 1)
+            micro = micro.contiguous()
+            micro = micro.detach().cpu().numpy()
+            logger.log(f"npz size: {micro.shape}")
+            path = './imagenet32_base_expobias/gt_x_0_600steps.npz'
+            np.savez(path, micro)
+
+            sample = ((sample + 1) * 127.5).clamp(0, 255).to(th.uint8)
+            sample = sample.permute(0, 2, 3, 1)
+            sample = sample.contiguous()
+            sample = sample.detach().cpu().numpy()
+            path = './imagenet32_base_expobias/pred_x_0_600steps.npz'
+            np.savez(path, sample)
 
             return avg_x_0_dist
 
