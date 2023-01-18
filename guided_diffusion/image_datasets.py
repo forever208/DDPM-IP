@@ -15,7 +15,7 @@ def load_data(
     batch_size,
     image_size,
     class_cond=False,
-    deterministic=False,
+    deterministic=True,
     random_crop=False,
     random_flip=True,
 ):

@@ -514,7 +514,7 @@ class GaussianDiffusion:
             img = noise
         else:
             img = th.randn(*shape, device=device)
-        indices = list(range(100))[::-1]  # [9, 8, 7,...0]
+        indices = list(range(1000))[::-1]  # [9, 8, 7,...0]
 
         if progress:
             # Lazy import so that we don't depend on tqdm.
@@ -900,8 +900,8 @@ class GaussianDiffusion:
         if model_kwargs is None:
             model_kwargs = {}
         if noise is None:
-            # th.manual_seed(0)
-            # th.cuda.manual_seed_all(0)
+            th.manual_seed(0)
+            th.cuda.manual_seed_all(0)
             noise = th.randn_like(x_start)
         x_t = self.q_sample(x_start, t, noise=noise)
 
