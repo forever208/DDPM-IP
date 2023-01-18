@@ -174,7 +174,7 @@ class TrainLoop:
         final_samples = samples_npz.reshape((-1, 32, 32, 3))
         final_samples = final_samples[:300]
         logger.log(f"npz size: {final_samples.shape}")
-        path = './imagenet32_noise_0.1_expobias/samples_for_compare_1000_steps.npz'
+        path = './cifar_noise_0.1_expobias/samples_for_compare_1000_steps.npz'
         np.savez(path, final_samples)
         logger.log(f"array saved into {path}")
 
