@@ -1,6 +1,10 @@
 # Downloading datasets
 
-This directory includes instructions and scripts for downloading ImageNet and LSUN bedrooms for use in this codebase.
+This directory includes instructions and scripts for downloading ImageNet, LSUN bedrooms, and CIFAR-10 for use in this codebase.
+
+## ImageNet-64
+
+To download unconditional ImageNet-64, go to [this page on image-net.org](http://www.image-net.org/small/download.php) and click on "Train (64x64)". Simply download the file and unzip it, and use the resulting directory as the data directory (the `--data_dir` argument for the training script).
 
 ## Class-conditional ImageNet
 
@@ -15,6 +19,12 @@ for file in *.tar; do tar xf "$file"; rm "$file"; done
 This will extract and remove each tar file in turn.
 
 Once all of the images have been extracted, the resulting directory should be usable as a data directory (the `--data_dir` argument for the training script). The filenames should all start with WNID (class ids) followed by underscores, like `n01440764_2708.JPEG`. Conveniently (but not by accident) this is how the automated data-loader expects to discover class labels.
+
+## CIFAR-10
+
+For CIFAR-10, we created a script `cifar10.py` that creates `cifar_train` and `cifar_test` directories. These directories contain files named like `truck_49997.png`, so that the class name is discernable to the data loader.
+
+The `cifar_train` and `cifar_test` directories can be passed directly to the training scripts via the `--data_dir` argument.
 
 ## LSUN bedroom
 
