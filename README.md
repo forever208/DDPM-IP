@@ -17,11 +17,12 @@ The implementation of Input Perturbation is just two lines of code.
 For instance, based on [guided-diffusion](https://github.com/openai/guided-diffusion),
 the only code modifications are in the script `guided_diffusion/gaussian_diffusion.py`:
 
-```ruby
+```python
 new_noise = noise + garmma * th.randn_like(noise)
 x_t = self.q_sample(x_start, t, noise=new_noise)
 ```
 
+NOTE THAT: change the parameter `GPUS_PER_NODE = 4` in the script `dist_util.py` according to your GPU cluster configuration.
 
 ## Download ADM-IP pre-trained models
 
