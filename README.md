@@ -3,12 +3,9 @@
 
 
 ## DDPM-IP
-
 This is the codebase for the paper [Input Perturbation Reduces Exposure Bias in Diffusion Models](https://arxiv.org/abs/2301.11706).
 
 This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
-
-Please refer to [guided-diffusion](https://github.com/openai/guided-diffusion) for the installation.
 
 
 ## Simple to implement Input Perturbation in DDPMs
@@ -23,6 +20,16 @@ x_t = self.q_sample(x_start, t, noise=new_noise)
 ```
 
 NOTE THAT: change the parameter `GPUS_PER_NODE = 4` in the script `dist_util.py` according to your GPU cluster configuration.
+
+
+## Installation
+the installation is the same with [guided-diffusion](https://github.com/openai/guided-diffusion)
+```
+git clone https://github.com/forever208/DDPM-IP.git
+cd DDPM-IP
+pip install -e .
+```
+
 
 ## Download ADM-IP pre-trained models
 
