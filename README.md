@@ -78,12 +78,18 @@ FID computation details:
 
 Training diffusion models is described in this [repository](https://github.com/openai/improved-diffusion).
 
-Training DDPM-IP only requires one more argument `--input perturbation 0.1`.
+Training ADM-IP only requires one more argument `--input perturbation 0.1` (set `--input perturbation 0.0` for the baseline).
 
-(set `--input perturbation 0.0` for the baseline DDPM)
+NOTE THAT: if you have problem with slurm multi-node training, try the following setting. Let's say training by 16 GPUs on 2 nodes:
+```
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=6
+#SBATCH --gres=gpu:8 # 8 gpus for each node
+```
+instead of specifying `mpiexec -n 16`, you run by `mpirun python script/image_train.py`. (more discussion can be found [here](https://github.com/openai/guided-diffusion/issues/22))
 
-We share the complete arguments of training in the four datasets:
-
+We share the complete arguments of training ADM-IP in the four datasets:
 
 CIFAR10
 ```
