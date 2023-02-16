@@ -42,6 +42,9 @@ Here are the download links for each model checkpoint:
  * LSUN tower 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1QUaY94bSAiTdGu5T_GtdIXMvGT3X1GMy/view?usp=sharing)
  * CelebA 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1Us9zKaIMh8dDlAZVXt3hR2FQYwhxEPYk/view?usp=sharing)
  
+ * CIFAR10 32x32: [DDIM-IP](https://drive.google.com/file/d/1TJ8HLO-LsmMS6GDkETIVQthZbUsd92kF/view?usp=sharing) 
+ (NOTE THAT we use [DDIM official code](https://github.com/ermongroup/ddim) to do DDIM-IP training and sampling)
+ 
 
 ## Sampling from pre-trained ADM-IP models
 
@@ -131,3 +134,14 @@ mpiexec -n 16  python scripts/image_train.py --input_pertub 0.1 \
 --rescale_learned_sigmas True --schedule_sampler loss-second-moment --lr 1e-4 --batch_size 16
 ```
 
+
+## Citation
+If you find our work useful, please feel free to cite by
+```
+@article{ning2023input,
+  title={Input Perturbation Reduces Exposure Bias in Diffusion Models},
+  author={Ning, Mang and Sangineto, Enver and Porrello, Angelo and Calderara, Simone and Cucchiara, Rita},
+  journal={arXiv preprint arXiv:2301.11706},
+  year={2023}
+}
+```
