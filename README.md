@@ -76,6 +76,9 @@ FID computation details:
 </p>
 
 
+## Prepare datasets
+Please refer to [README.md](https://github.com/forever208/DDPM-IP/tree/DDPM-IP/datasets) for the data preparation.
+
 
 ## Training ADM-IP
 
