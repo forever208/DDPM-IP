@@ -1,5 +1,6 @@
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-celeba-64x64)](https://paperswithcode.com/sota/image-generation-on-celeba-64x64?p=input-perturbation-reduces-exposure-bias-in)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-imagenet32)](https://paperswithcode.com/sota/image-generation-on-imagenet32?p=input-perturbation-reduces-exposure-bias-in)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-lsun-tower-64x64)](https://paperswithcode.com/sota/image-generation-on-lsun-tower-64x64?p=input-perturbation-reduces-exposure-bias-in)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-imagenet-32x32)](https://paperswithcode.com/sota/image-generation-on-imagenet-32x32?p=input-perturbation-reduces-exposure-bias-in)
 
 
 ## DDPM-IP
@@ -8,17 +9,17 @@ This is the codebase for the paper [Input Perturbation Reduces Exposure Bias in 
 This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
 
 
-## Simple to implement Input Perturbation in DDPMs
+## Simple to implement Input Perturbation in diffusion models
 Our proposed __Input Perturbation__  is an extremely simple __plug-in__ method for general diffusion models.
 The implementation of Input Perturbation is just two lines of code.
+
 For instance, based on [guided-diffusion](https://github.com/openai/guided-diffusion),
-the only code modifications are in the script `guided_diffusion/gaussian_diffusion.py`:
+the only code modifications are in the script [guided_diffusion/gaussian_diffusion.py](https://github.com/forever208/DDPM-IP/blob/DDPM-IP/guided_diffusion/gaussian_diffusion.py), in line 765-766:
 
 ```python
-new_noise = noise + garmma * th.randn_like(noise)
+new_noise = noise + garmma * th.randn_like(noise)  # garmma set as 0.1
 x_t = self.q_sample(x_start, t, noise=new_noise)
 ```
-
 NOTE THAT: change the parameter `GPUS_PER_NODE = 4` in the script `dist_util.py` according to your GPU cluster configuration.
 
 
