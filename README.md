@@ -8,6 +8,9 @@ This is the codebase for the paper [Input Perturbation Reduces Exposure Bias in 
 
 This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
 
+Coming soon (results on higher resolution dataset)
+- [ ] FFHQ 128x128
+- [ ] FFHQ 256x256
 
 ## Simple to implement Input Perturbation in diffusion models
 Our proposed __Input Perturbation__  is an extremely simple __plug-in__ method for general diffusion models.
@@ -74,6 +77,12 @@ FID computation details:
 
 <p align="left">
   <img src="https://github.com/forever208/DDPM-IP/blob/DDPM-IP/datasets/DDPM-IP-results.png" width='100%' height='100%'/>
+</p>
+
+
+This table summarizes our input perturbation results based on DDIM baselines.
+<p align="left">
+  <img src="https://github.com/forever208/DDPM-IP/blob/DDPM-IP/datasets/DDIM-IP-results.png" width='100%' height='100%'/>
 </p>
 
 
