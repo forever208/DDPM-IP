@@ -41,7 +41,7 @@ We have released checkpoints for the main models in the paper.
 
 Here are the download links for each model checkpoint:
 
- * CIFAR10 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1-3WpnfIZL7VNDK4GBBQ2IvJCPxoEaGwD/view?usp=share_link)
+ * CIFAR10 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1yLLoS1fLSRiQNIbjWcGAaEqt_cz82IHE/view?usp=sharing)
  * ImageNet 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1FFUJDk-__9y9DnAG6DKDx5W7LgEIuJyk/view?usp=share_link)
  * LSUN tower 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1QUaY94bSAiTdGu5T_GtdIXMvGT3X1GMy/view?usp=sharing)
  * CelebA 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1Us9zKaIMh8dDlAZVXt3hR2FQYwhxEPYk/view?usp=sharing)
