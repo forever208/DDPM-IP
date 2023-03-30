@@ -76,7 +76,7 @@ FID computation details:
 - For LSUN tower 64x64 and CelebA 64x64, we randomly pick up 50k samples from the training set, forming the reference batch   
 
 <p align="left">
-  <img src="https://github.com/forever208/DDPM-IP/blob/DDPM-IP/datasets/DDPM-IP-results.png" width='100%' height='100%'/>
+  <img src="https://github.com/forever208/DDPM-IP/blob/DDPM-IP/datasets/FID.png" width='100%' height='100%'/>
 </p>
 
 
