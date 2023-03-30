@@ -20,7 +20,7 @@ For instance, based on [guided-diffusion](https://github.com/openai/guided-diffu
 the only code modifications are in the script [guided_diffusion/gaussian_diffusion.py](https://github.com/forever208/DDPM-IP/blob/DDPM-IP/guided_diffusion/gaussian_diffusion.py), in line 765-766:
 
 ```python
-new_noise = noise + garmma * th.randn_like(noise)  # garmma set as 0.1
+new_noise = noise + gamma * th.randn_like(noise)  # gamma=0.15 for CIFAR10, gamma=0.1 for other datasets
 x_t = self.q_sample(x_start, t, noise=new_noise)
 ```
 NOTE THAT: change the parameter `GPUS_PER_NODE = 4` in the script `dist_util.py` according to your GPU cluster configuration.
@@ -69,6 +69,7 @@ mpirun python scripts/image_sample.py \
 ## Results
 
 This table summarizes our input perturbation results based on ADM baselines.
+Input perturbation shows tremendous training acceleration and much better FID results.
 
 FID computation details: 
 - All FIDs are computed using 50K generated samples (unconditional sampling). 
