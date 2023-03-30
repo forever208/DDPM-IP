@@ -110,7 +110,7 @@ We share the complete arguments of training ADM-IP in the four datasets:
 
 CIFAR10
 ```
-mpiexec -n 2  python scripts/image_train.py --input_pertub 0.1 \
+mpiexec -n 2  python scripts/image_train.py --input_pertub 0.15 \
 --data_dir PATH_TO_DATASET \
 --image_size 32 --use_fp16 True --num_channels 128 --num_head_channels 32 --num_res_blocks 3 \
 --attention_resolutions 16,8 --resblock_updown True --use_new_attention_order True \
