@@ -2,7 +2,7 @@
 
 To compare different generative models, we use FID, sFID, Precision, Recall, and Inception Score. These metrics can all be calculated using batches of samples, which we store in `.npz` (numpy) files.
 
-# solution to tensorflow2 bug
+# Solution to Tensorflow2 bug
 you might encounter the bug: Could not load dynamic library 'libcudart.so.11.0 etc.
 
 recommended installation:
