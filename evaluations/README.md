@@ -12,6 +12,8 @@ $ conda install cudatoolkit=11.0
 $ conda install -c conda-forge cudnn
 ```
 
+(refer to [libcudart.so.11.0](https://github.com/tensorflow/tensorflow/issues/45930) and [libcudart.so.8](https://github.com/tensorflow/tensorflow/issues/45200) for details)
+
 
 # Run evaluations
 
