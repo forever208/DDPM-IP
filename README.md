@@ -8,9 +8,9 @@ This is the codebase for the ICML 2023 paper [Input Perturbation Reduces Exposur
 
 This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
 
-Coming soon (results on higher resolution dataset)
-- [ ] FFHQ 128x128
-- [ ] FFHQ 256x256
+Coming soon
+- [√] FFHQ 128x128
+- [ ] update arXiv paper
 
 ## Simple to implement Input Perturbation in diffusion models
 Our proposed __Input Perturbation__  is an extremely simple __plug-in__ method for general diffusion models.
