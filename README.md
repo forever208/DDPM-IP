@@ -34,6 +34,7 @@ cd DDPM-IP
 conda create -n ADM python=3.8
 conda activate ADM
 pip install -e .
+(note that, pytorch 1.10~1.13 is recommended as our experiments in paper were done with pytorch 1.10 and pytorch 2.0 has not been tested by us in this repo)
 
 # install the missing packages
 conda install mpi4py
