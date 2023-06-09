@@ -39,6 +39,7 @@ pip install -e .
 conda install mpi4py
 conda install numpy
 pip install Pillow
+pip install opencv-python
 ```
 
 
