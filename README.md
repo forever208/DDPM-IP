@@ -31,7 +31,14 @@ the installation is the same with [guided-diffusion](https://github.com/openai/g
 ```
 git clone https://github.com/forever208/DDPM-IP.git
 cd DDPM-IP
+conda create -n ADM python=3.8
+conda activate ADM
 pip install -e .
+
+# install the missing packages
+conda install mpi4py
+conda install numpy
+pip install Pillow
 ```
 
 
