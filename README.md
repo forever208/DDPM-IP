@@ -8,10 +8,6 @@ This is the codebase for the ICML 2023 paper [Input Perturbation Reduces Exposur
 
 This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
 
-Coming soon
-- [√] FFHQ 128x128
-- [ ] update arXiv paper
-
 ## Simple to implement Input Perturbation in diffusion models
 Our proposed __Input Perturbation__  is an extremely simple __plug-in__ method for general diffusion models.
 The implementation of Input Perturbation is just two lines of code.
@@ -20,7 +16,7 @@ For instance, based on [guided-diffusion](https://github.com/openai/guided-diffu
 the only code modifications are in the script [guided_diffusion/gaussian_diffusion.py](https://github.com/forever208/DDPM-IP/blob/DDPM-IP/guided_diffusion/gaussian_diffusion.py), in line 765-766:
 
 ```python
-new_noise = noise + gamma * th.randn_like(noise)  # gamma=0.15 for CIFAR10, gamma=0.1 for other datasets
+new_noise = noise + gamma * th.randn_like(noise)  # gamma=0.1
 x_t = self.q_sample(x_start, t, noise=new_noise)
 ```
 NOTE THAT: change the parameter `GPUS_PER_NODE = 4` in the script `dist_util.py` according to your GPU cluster configuration.

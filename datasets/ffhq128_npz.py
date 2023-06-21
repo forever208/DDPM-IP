@@ -8,19 +8,18 @@ import cv2
 def imgs_to_npz():
     npz = []
 
-    for img in os.listdir("./img_align_celeba"):
-        img_arr = cv2.imread("./img_align_celeba/" + img)
+    for img in os.listdir("./thumbnails128x128"):
+        img_arr = cv2.imread("./thumbnails128x128/" + img)
         img_arr = cv2.cvtColor(img_arr, cv2.COLOR_BGR2RGB)  # cv2默认为 bgr 顺序
-        resized_img = cv2.resize(img_arr, (64, 64))
-        npz.append(resized_img)
+        npz.append(img_arr)
 
     output_npz = np.array(npz)
-    np.savez('celeba64_train.npz', output_npz)
-    print(f"{output_npz.shape} size array saved into celeba64_train.npz")  # (202599, 64, 64, 3)
+    np.savez('ffhqq128_train.npz', output_npz)
+    print(f"{output_npz.shape} size array saved into ffhqq128_train.npz")  # (70000, 128, 128, 3)
 
 
 def show_images():
-    x = np.load('./celeba64/celeba64_train.npz')['arr_0']
+    x = np.load('./ffhqq128_train.npz')['arr_0']
     plt.figure(figsize=(10, 10))
     for i in range(16):
         img = x[i, :, :, :]
@@ -32,5 +31,5 @@ def show_images():
 
 
 if __name__ == '__main__':
-    # imgs_to_npz()
-    show_images()
+    imgs_to_npz()
+    # show_images()
