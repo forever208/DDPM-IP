@@ -1,3 +1,4 @@
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-ffhq-128-x-128)](https://paperswithcode.com/sota/image-generation-on-ffhq-128-x-128?p=input-perturbation-reduces-exposure-bias-in)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-celeba-64x64)](https://paperswithcode.com/sota/image-generation-on-celeba-64x64?p=input-perturbation-reduces-exposure-bias-in)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-lsun-tower-64x64)](https://paperswithcode.com/sota/image-generation-on-lsun-tower-64x64?p=input-perturbation-reduces-exposure-bias-in)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/input-perturbation-reduces-exposure-bias-in/image-generation-on-imagenet-32x32)](https://paperswithcode.com/sota/image-generation-on-imagenet-32x32?p=input-perturbation-reduces-exposure-bias-in)
@@ -50,7 +51,7 @@ Here are the download links for each model checkpoint:
  * ImageNet 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1FFUJDk-__9y9DnAG6DKDx5W7LgEIuJyk/view?usp=share_link)
  * LSUN tower 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1QUaY94bSAiTdGu5T_GtdIXMvGT3X1GMy/view?usp=sharing)
  * CelebA 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1Us9zKaIMh8dDlAZVXt3hR2FQYwhxEPYk/view?usp=sharing)
- 
+ * FFHQ 128x128: [ADM-IP.pt](https://drive.google.com/file/d/1cadXgH2YYVGGi5os-h6oQAp_8XCTURc7/view?usp=sharing)
  * CIFAR10 32x32: [DDIM-IP](https://drive.google.com/file/d/1TJ8HLO-LsmMS6GDkETIVQthZbUsd92kF/view?usp=sharing) 
  (NOTE THAT we use [DDIM official code](https://github.com/ermongroup/ddim) to do DDIM-IP training and sampling)
  
@@ -153,6 +154,15 @@ mpiexec -n 16  python scripts/image_train.py --input_pertub 0.1 \
 --rescale_learned_sigmas True --schedule_sampler loss-second-moment --lr 1e-4 --batch_size 16
 ```
 
+FFHQ 128x128
+```
+mpirun -n 16 python scripts/image_train.py --input_pertub 0.1 \
+--data_dir PATH_TO_DATASET \
+--image_size 128 --use_fp16 True --num_channels 256 --num_head_channels 64 --num_res_blocks 3 \
+--attention_resolutions 32,16,8 --resblock_updown True --use_new_attention_order True \
+--learn_sigma True --dropout 0.1 --diffusion_steps 1000 --noise_schedule cosine --use_scale_shift_norm True \
+--rescale_learned_sigmas True --schedule_sampler loss-second-moment --lr 1e-4 --batch_size 8
+```
 
 ## Citation
 If you find our work useful, please feel free to cite by
