@@ -14,10 +14,10 @@ First download ImageNet-32 from [ImageNet official website](https://image-net.or
 
 ## LSUN tower 64x64
 
-To download and pre-process LSUN tower, clone [fyu/lsun](https://github.com/fyu/lsun) on GitHub and run their download script `python download.py -c tower`. The result will be an "lmdb" database named like `tower_train_lmdb`. You can pass this to our [lsun_bedroom.py](lsun_bedroom.py) script like so:
+To download and pre-process LSUN tower, clone [fyu/lsun](https://github.com/fyu/lsun) on GitHub and run their download script `python download.py -c tower`. The result will be an "lmdb" database zip file, unzip it to get a `tower_train_lmdb` folder. You can pass this to our [lsun_bedroom.py](lsun_bedroom.py) script to the folder `lsun_tower_train` that contains all jpg format images:
 
 ```
-python lsun_bedroom.py tower_train_lmdb lsun_train_output_dir
+python lsun_bedroom.py --image-size 64 --prefix tower tower_train_lmdb lsun_tower_train
 ```
 
 
