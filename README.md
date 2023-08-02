@@ -41,17 +41,20 @@ pip install opencv-python
 ```
 
 
-## Download ADM-IP pre-trained models
+## Download ADM-IP models and ADM base models
 
 We have released checkpoints for the main models in the paper.
 
-Here are the download links for each model checkpoint:
+(The baseline checkpoint of ImageNet-32 and CelebA-64 are missing due to unexpected server file deletion.
+If you have trained the ADM base models, welcome to share the checkpoints)
 
- * CIFAR10 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1yLLoS1fLSRiQNIbjWcGAaEqt_cz82IHE/view?usp=sharing)
+Here are the download links for model checkpoints:
+
+ * CIFAR10 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1yLLoS1fLSRiQNIbjWcGAaEqt_cz82IHE/view?usp=sharing), [ADM-baseline.pt](https://drive.google.com/file/d/1m-a3WqfpMTibzuTC2om046yWQr20GT0I/view?usp=sharing)
  * ImageNet 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1FFUJDk-__9y9DnAG6DKDx5W7LgEIuJyk/view?usp=share_link)
- * LSUN tower 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1QUaY94bSAiTdGu5T_GtdIXMvGT3X1GMy/view?usp=sharing)
+ * LSUN tower 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1QUaY94bSAiTdGu5T_GtdIXMvGT3X1GMy/view?usp=sharing), [ADM-baseline.pt](https://drive.google.com/file/d/1_7gLg44qP4v5bgJNvSo65MtXDZ3xXW39/view?usp=sharing)
  * CelebA 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1Us9zKaIMh8dDlAZVXt3hR2FQYwhxEPYk/view?usp=sharing)
- * FFHQ 128x128: [ADM-IP.pt](https://drive.google.com/file/d/1cadXgH2YYVGGi5os-h6oQAp_8XCTURc7/view?usp=sharing)
+ * FFHQ 128x128: [ADM-IP.pt](https://drive.google.com/file/d/1cadXgH2YYVGGi5os-h6oQAp_8XCTURc7/view?usp=sharing), [ADM-baseline.pt](https://drive.google.com/file/d/1P5Kgyyqp4Zv1RiW116MgBmeX299bGcDw/view?usp=sharing)
  * CIFAR10 32x32: [DDIM-IP](https://drive.google.com/file/d/1TJ8HLO-LsmMS6GDkETIVQthZbUsd92kF/view?usp=sharing) 
  (NOTE THAT we use [DDIM official code](https://github.com/ermongroup/ddim) to do DDIM-IP training and sampling)
  
