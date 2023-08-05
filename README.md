@@ -50,7 +50,7 @@ If you have trained the ADM base models, welcome to share the checkpoints)
 
 Here are the download links for model checkpoints:
 
- * CIFAR10 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1yLLoS1fLSRiQNIbjWcGAaEqt_cz82IHE/view?usp=sharing), [ADM-baseline.pt](https://drive.google.com/file/d/1m-a3WqfpMTibzuTC2om046yWQr20GT0I/view?usp=sharing)
+ * CIFAR10 32x32: [ADM-IP.pt](https://drive.google.com/file/d/107CyhiRazNZWkksvoyYRLn71Pcs5FOBo/view?usp=sharing), [ADM-baseline.pt](https://drive.google.com/file/d/1m-a3WqfpMTibzuTC2om046yWQr20GT0I/view?usp=sharing)
  * ImageNet 32x32: [ADM-IP.pt](https://drive.google.com/file/d/1FFUJDk-__9y9DnAG6DKDx5W7LgEIuJyk/view?usp=share_link)
  * LSUN tower 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1QUaY94bSAiTdGu5T_GtdIXMvGT3X1GMy/view?usp=sharing), [ADM-baseline.pt](https://drive.google.com/file/d/1_7gLg44qP4v5bgJNvSo65MtXDZ3xXW39/view?usp=sharing)
  * CelebA 64x64: [ADM-IP.pt](https://drive.google.com/file/d/1Us9zKaIMh8dDlAZVXt3hR2FQYwhxEPYk/view?usp=sharing)
