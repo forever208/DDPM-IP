@@ -5,9 +5,10 @@
 
 
 ## DDPM-IP
-This is the codebase for the ICML 2023 paper [Input Perturbation Reduces Exposure Bias in Diffusion Models](https://arxiv.org/abs/2301.11706).
+This is the codebase for the ICML 2023 paper [**Input Perturbation Reduces Exposure Bias in Diffusion Models**](https://arxiv.org/abs/2301.11706).
+<br>This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
 
-This repository is heavily based on [openai/guided-diffusion](https://github.com/openai/guided-diffusion), with training modification of input perturbation.
+Also, feel free to check out our new paper [**Elucidating the Exposure Bias in Diffusion Models**](https://arxiv.org/abs/2308.15321) which introduces a **training-free** solution to exposure bias. Repository: [ADM-ES](https://github.com/forever208/ADM-ES) and [EDM-ES](https://github.com/forever208/EDM-ES)
 
 ## Simple to implement Input Perturbation in diffusion models
 Our proposed __Input Perturbation__  is an extremely simple __plug-in__ method for general diffusion models.
