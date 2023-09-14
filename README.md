@@ -178,3 +178,12 @@ If you find our work useful, please feel free to cite by
   year={2023}
 }
 ```
+
+```
+@article{ning2023elucidating,
+  title={Elucidating the Exposure Bias in Diffusion Models},
+  author={Ning, Mang and Li, Mingxiao and Su, Jianlin and Salah, Albert Ali and Ertugrul, Itir Onal},
+  journal={arXiv preprint arXiv:2308.15321},
+  year={2023}
+}
+```
