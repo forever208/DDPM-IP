@@ -65,7 +65,7 @@ Here are the download links for model checkpoints:
 To unconditionally sample from these models, you can use the `image_sample.py` scripts.
 Sampling from DDPM-IP has no difference with sampling from `openai/guided-diffusion` since DDPM-IP does not change the sampling process.
 
-For example, we sample 50k images from CIFAR10 by: 
+For example, we sample 50k images using 100 steps from CIFAR10 by: 
 ```
 mpirun python scripts/image_sample.py \
 --image_size 32 --timestep_respacing 100 \
@@ -74,6 +74,29 @@ mpirun python scripts/image_sample.py \
 --resblock_updown True --use_new_attention_order True --learn_sigma True --dropout 0.3 \
 --diffusion_steps 1000 --noise_schedule cosine --use_scale_shift_norm True --batch_size 256 --num_samples 50000
 ```
+
+sample 50k images using 100 steps from LSUN_tower by: 
+```
+mpirun -n 1 python scripts/image_sample.py \
+--image_size 64 --timestep_respacing 100 \
+--model_path PATH_TO_CHECKPOINT \
+--use_fp16 True --num_channels 192 --num_head_channels 64 --num_res_blocks 3 \
+--attention_resolutions 32,16,8 --resblock_updown True --use_new_attention_order True \
+--learn_sigma True --dropout 0.1 --diffusion_steps 1000 --noise_schedule cosine --use_scale_shift_norm True \
+--rescale_learned_sigmas True --batch_size 256 --num_samples 50000
+```
+
+sample 50k images using 100 steps from FFHQ128 by:
+```
+mpirun -n 1 python scripts/image_sample.py \
+--image_size 128 --timestep_respacing 100 \
+--model_path PATH_TO_CHECKPOINT \
+--use_fp16 True --num_channels 256 --num_head_channels 64 --num_res_blocks 3 \
+--attention_resolutions 32,16,8 --resblock_updown True --use_new_attention_order True \
+--learn_sigma True --dropout 0.1 --diffusion_steps 1000 --noise_schedule cosine --use_scale_shift_norm True \
+--rescale_learned_sigmas True --batch_size 128 --num_samples 50000
+```
+
 
 
 ## Results
@@ -103,11 +126,11 @@ Please refer to [README.md](https://github.com/forever208/DDPM-IP/tree/DDPM-IP/d
 
 ## Training ADM-IP
 
-Training diffusion models is described in this [repository](https://github.com/openai/improved-diffusion).
+Training diffusion models are described in this [repository](https://github.com/openai/improved-diffusion).
 
 Training ADM-IP only requires one more argument `--input perturbation 0.1` (set `--input perturbation 0.0` for the baseline).
 
-NOTE THAT: if you have problem with slurm multi-node training, try the following setting. Let's say training by 16 GPUs on 2 nodes:
+NOTE THAT: if you have problems with slurm multi-node training, try the following setting. Let's say training by 16 GPUs on 2 nodes:
 ```
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=8
