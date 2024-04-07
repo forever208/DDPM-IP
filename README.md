@@ -194,11 +194,13 @@ mpirun -n 16 python scripts/image_train.py --input_pertub 0.1 \
 ## Citation
 If you find our work useful, please feel free to cite by
 ```
-@article{ning2023input,
+@inproceedings{ning2023input,
   title={Input Perturbation Reduces Exposure Bias in Diffusion Models},
   author={Ning, Mang and Sangineto, Enver and Porrello, Angelo and Calderara, Simone and Cucchiara, Rita},
-  journal={arXiv preprint arXiv:2301.11706},
-  year={2023}
+  booktitle={International Conference on Machine Learning},
+  pages={26245--26265},
+  year={2023},
+  organization={PMLR}
 }
 ```
 
