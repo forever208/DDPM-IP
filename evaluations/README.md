@@ -7,6 +7,7 @@ you might encounter the bug: Could not load dynamic library 'libcudart.so.11.0 e
 
 recommended installation:
 ```
+$ conda create -n FID python==3.8  # (3.9 does not support tf 2.4)
 $ pip install tensorflow==2.4
 $ conda install cudatoolkit=11.0
 $ conda install -c conda-forge cudnn
