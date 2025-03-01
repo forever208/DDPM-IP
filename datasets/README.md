@@ -7,6 +7,8 @@ For CIFAR-10, we created a script `cifar10.py` that creates `cifar_train` and `c
 
 The `cifar_train` and `cifar_test` directories can be passed directly to the training scripts via the `--data_dir` argument.
 
+Using `cifar_train` for training.
+
 
 ## ImageNet 32x32
 First download ImageNet-32 from [ImageNet official website](https://image-net.org/download.php), then use our script `imagenet32_npz.py ` to pack all images into one .npz file

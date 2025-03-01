@@ -26,19 +26,22 @@ NOTE THAT: change the parameter `GPUS_PER_NODE = 4` in the script `dist_util.py`
 
 ## Installation
 the installation is the same with [guided-diffusion](https://github.com/openai/guided-diffusion)
+we use pytorch 1.13
 ```
 git clone https://github.com/forever208/DDPM-IP.git
 cd DDPM-IP
 conda create -n ADM python=3.8
 conda activate ADM
 pip install -e .
-(note that, pytorch 1.10~1.13 is recommended as our experiments in paper were done with pytorch 1.10 and pytorch 2.0 has not been tested by us in this repo)
+(note that, pytorch 1.10~1.13 is recommended, pytorch 2.0 has not been tested by us in this repo)
 
 # install the missing packages
-conda install mpi4py
-conda install numpy
-pip install Pillow
-pip install opencv-python
+conda install mpi4py==3.1.4
+conda install numpy==1.24.3
+pip install Pillow==9.5.0
+pip install opencv-python==4.7.0.72
+pip install torchvision==0.14.0
+pip install torchsummary==1.5.1
 ```
 
 
@@ -141,10 +144,10 @@ instead of specifying `mpiexec -n 16`, you run by `mpirun python script/image_tr
 
 We share the complete arguments of training ADM-IP in the four datasets:
 
-CIFAR10
+CIFAR10 (we report the FID using IP=0.1, but we later found that 0.15 could yield a better results)
 ```
 mpiexec -n 2  python scripts/image_train.py --input_pertub 0.15 \
---data_dir PATH_TO_DATASET \
+--data_dir ./datasets/cifar_train \
 --image_size 32 --use_fp16 True --num_channels 128 --num_head_channels 32 --num_res_blocks 3 \
 --attention_resolutions 16,8 --resblock_updown True --use_new_attention_order True \
 --learn_sigma True --dropout 0.3 --diffusion_steps 1000 --noise_schedule cosine --use_scale_shift_norm True \
