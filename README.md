@@ -35,10 +35,12 @@ pip install -e .
 (note that, pytorch 1.10~1.13 is recommended as our experiments in paper were done with pytorch 1.10 and pytorch 2.0 has not been tested by us in this repo)
 
 # install the missing packages
-conda install mpi4py
-conda install numpy
-pip install Pillow
-pip install opencv-python
+conda install mpi4py==3.1.4
+conda install numpy==1.24.3
+pip install Pillow==9.5.0
+pip install opencv-python==4.7.0.72
+pip install torchvision==0.14.0
+pip install torchsummary==1.5.1
 ```
 
 

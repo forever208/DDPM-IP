@@ -19,7 +19,7 @@ CLASSES = (
 )
 
 
-def main():
+def download_cifar10():
     idx = 0
     for split in ["train", "test"]:
         out_dir = f"cifar_{split}"
@@ -43,6 +43,7 @@ def main():
 
 
 def imgs_to_npz():
+    """to be used for FID computation as the reference batch"""
     npz = []
 
     for img in os.listdir("./cifar_train"):
@@ -56,5 +57,5 @@ def imgs_to_npz():
 
 
 if __name__ == "__main__":
-    main()
-    # imgs_to_npz()
+    download_cifar10()
+    imgs_to_npz()

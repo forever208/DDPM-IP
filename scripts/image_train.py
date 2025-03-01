@@ -3,7 +3,7 @@ Train a diffusion model on images.
 """
 
 import argparse
-from torchsummary import summary
+# from torchsummary import summary
 
 from guided_diffusion import dist_util, logger
 from guided_diffusion.image_datasets import load_data
@@ -28,7 +28,7 @@ def main():
         **args_to_dict(args, model_and_diffusion_defaults().keys())
     )
     model.to(dist_util.dev())
-    logger.log(summary(model, input_size=(3, 64, 64)))
+    # logger.log(summary(model, input_size=(3, 64, 64)))
     schedule_sampler = create_named_schedule_sampler(args.schedule_sampler, diffusion)
     logger.log(f"creating data loader from {args.data_dir}...")
 
