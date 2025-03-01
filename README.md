@@ -69,6 +69,8 @@ Here are the download links for model checkpoints:
 To unconditionally sample from these models, you can use the `image_sample.py` scripts.
 Sampling from DDPM-IP has no difference with sampling from `openai/guided-diffusion` since DDPM-IP does not change the sampling process.
 
+Note that, always using `ema_0.9999_xxxx` ckpt for sampling.
+
 For example, we sample 50k images using 100 steps from CIFAR10 by: 
 ```
 mpirun python scripts/image_sample.py \
