@@ -69,7 +69,7 @@ Here are the download links for model checkpoints:
 To unconditionally sample from these models, you can use the `image_sample.py` scripts.
 Sampling from DDPM-IP has no difference with sampling from `openai/guided-diffusion` since DDPM-IP does not change the sampling process.
 
-Note that, always using `ema_0.9999_xxxx` ckpt for sampling.
+**Note that, always using `ema_0.9999_xxxx` ckpt for sampling**
 
 For example, we sample 50k images using 100 steps from CIFAR10 by: 
 ```
@@ -146,6 +146,9 @@ NOTE THAT: if you have problems with slurm multi-node training, try the followin
 instead of specifying `mpiexec -n 16`, you run by `mpirun python script/image_train.py`. (more discussion can be found [here](https://github.com/openai/guided-diffusion/issues/22))
 
 We share the complete arguments of training ADM-IP in the four datasets:
+
+If you need to resume training, add args `--resume_checkpoint ./cifar10/modelxxxx.pt \`
+
 
 CIFAR10 (we report the FID using IP=0.1, but we later found that 0.15 could yield a better results)
 ```
